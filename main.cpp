@@ -1,38 +1,49 @@
-#include "parser.h"
-#include <sys/un.h>
+#include "util.hpp"
+#include "transport.hpp"
+#include "parser.hpp"
 
-using namespace std;
+template<typename T>
+Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
+    Message<T> m;
+    m.op = op;
+    m.destination = destination;
+    m.data = *reinterpret_cast<T *>(data);
+    return m;
+}
 
 int main() {
     ServerSocket serv = ServerSocket();
     serv.listen(9019);
     loop {
-        cout << "waiting" << endl;
+        std::cout << "-- Waiting" << std::endl;
         val client = serv.accept();
         if (!client) break;
-        cout << "Accept " << client << endl;
+        std::cout << "-- Accept " << (int) client->addr.sin_port << std::endl;
         uint8_t buf[128];
         for (ssize_t r; (r = client->read(buf, sizeof buf - 1)) != 0;) {
             if (r < 0) {
                 error(errno, errno, "recv");
             }
             var *p = buf;
-            assert(*p++ == parser::Destination::REMOTE);
-            switch (*p) {
-#define REQUEST_PARSE(id, value, size)                                                              \
-                case value:                                                                     \
-                    cout << "<  0x" << hex << value << " " << #id << " (" << size << ")" << endl;  \
-                    p += size;                                                                  \
-                    parser::respond(static_cast<parser::Request>(value), client);                                                     \
+            val destination = static_cast<Destination>(*p++);
+            assert(destination == Destination::REMOTE);
+
+            val op = *p;
+            switch (op) {
+#define REQUEST_PARSE(id, value, type, size)                                                        \
+                case value:                                                                         \
+                    std::cout << "<  0x" << std::hex << value << " " << #id << " (" << size << ")" << std::endl; \
+                    respond(read<type>(destination, op, p), *client);                                  \
+                    p += size;                                                                      \
                     break;
                 REQUESTS(REQUEST_PARSE)
                 default:
-                    cout << "WTF 0x" << hex << (int) *p << endl;
+                    std::cout << "<  0x" << std::hex << (int) op << std::endl;
                     break;
             }
             zero(buf);
         }
-        cout << "Close " << client << endl;
+        std::cout << "-- Close " << (int) client->addr.sin_port << std::endl;
         client->close();
     }
     serv.close();

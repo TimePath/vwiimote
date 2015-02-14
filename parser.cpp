@@ -1,30 +1,21 @@
-#include <sys/un.h>
-#include <bits/unique_ptr.h>
-#include "parser.h"
+#include "util.hpp"
+#include "parser.hpp"
 
 // http://wiibrew.org/wiki/Wiimote
 
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#pragma pack(push, 1)
-template<typename T>
-struct Message {
-    parser::Destination destination;
-    uint8_t op;
-    T data;
-};
-
 template<typename T>
 void write(Socket &socket, std::unique_ptr<Message<T>> buf, size_t &length) {
     socket.write(reinterpret_cast<uint8_t *>(buf.get()), length);
-    std::cout << " > " << "0x" << std::hex << (int) buf->op << " " << (parser::Response) buf->op << " (" << sizeof buf->data << ")" << std::endl;
+    std::cout << " > " << "0x" << std::hex << (int) buf->op << " " << (Response) buf->op << " (" << sizeof buf->data << ")" << std::endl;
 }
 
 template<typename T>
-std::unique_ptr<Message<T>> pack(parser::Response op, T &payload, size_t &length) {
+std::unique_ptr<Message<T>> pack(Response op, T &payload, size_t &length) {
     std::unique_ptr<Message<T>> msg(new Message<T>);
     memset(msg.get(), 0, length = sizeof *msg);
-    msg->destination = parser::CONSOLE;
+    msg->destination = CONSOLE;
     msg->op = op;
     msg->data = payload;
     return msg;
@@ -35,50 +26,31 @@ std::unique_ptr<Message<T>> pack(parser::Response op, T &payload, size_t &length
     write(socket, pack(response, struct, length), length);  \
 } while(0)
 
-void parser::respond(Request op, const Socket *socket) {
-    Socket s = *socket;
-#define REQUEST_RESPOND(id, value, size)    \
-        case value:                         \
-            parser::respond_##id(s);        \
-            break;
-    switch ((uint8_t) op) {
-        REQUESTS(REQUEST_RESPOND)
-        default:
-            break;
-    }
-}
+//template<>
+//void respond(Message<rumble_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<led_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<data_report_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<ir1_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<speaker_enable_t> msg, Socket &socket) {
+//}
 
-void parser::respond_NOP(Socket &socket) {
-}
-
-void parser::respond_RUMBLE(Socket &socket) {
-}
-
-void parser::respond_LED(Socket &socket) {
-}
-
-void parser::respond_DATA_REPORT(Socket &socket) {
-}
-
-void parser::respond_IR1(Socket &socket) {
-}
-
-void parser::respond_SPEAKER_ENABLE(Socket &socket) {
-}
-
-void parser::respond_STATUS_REQUEST(Socket &socket) {
-    struct {
-        int16_t buttons;
-        union {
-            struct {
-                uint8_t leds : 4;
-                uint8_t flags : 4;
-            } bits;
-            uint8_t ledflags;
-        };
-        uint16_t padding;
-        uint8_t battery;
-    } status;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+template<>
+void respond(Message<status_request_t> msg, Socket &socket) {
+    status_t status;
     zero(status);
     status.buttons = 1;
     status.bits.leds = 2;
@@ -86,20 +58,25 @@ void parser::respond_STATUS_REQUEST(Socket &socket) {
     status.battery = 4;
     write(socket, STATUS, status);
 }
+#pragma clang diagnostic pop
 
-void parser::respond_MEM_WRITE(Socket &socket) {
+template<>
+void respond(Message<mem_write_t> msg, Socket &socket) {
+    std::cout << "-- Storing " << (int) msg.data.size << " bytes" << std::endl;
 }
 
-void parser::respond_MEM_READ(Socket &socket) {
-}
-
-void parser::respond_SPEAKER_DATA(Socket &socket) {
-}
-
-void parser::respond_SPEAKER_MUTE(Socket &socket) {
-}
-
-void parser::respond_IR2(Socket &socket) {
-}
-
-#pragma pack(pop)
+//template<>
+//void respond(Message<mem_read_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<speaker_data_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<speaker_mute_t> msg, Socket &socket) {
+//}
+//
+//template<>
+//void respond(Message<ir2_t> msg, Socket &socket) {
+//}

@@ -1,13 +1,12 @@
 #pragma once
 
-#include <glob.h>
-#include <monetary.h>
-#include <printf.h>
+#include <netinet/in.h>
 #include "util.hpp"
 
 class Socket {
     int fd = -1;
 public:
+    sockaddr_in addr;
 
     void close();
 
@@ -15,7 +14,7 @@ public:
 
     ssize_t write(void *buf, size_t len);
 
-    Socket(int fd);
+    Socket(int fd, sockaddr_in addr);
 };
 
 class ServerSocket {
@@ -24,7 +23,7 @@ public:
 
     void listen(uint16_t port);
 
-    Socket *accept();
+    std::unique_ptr<Socket> accept();
 
     void close();
 };

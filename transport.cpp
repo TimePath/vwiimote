@@ -1,10 +1,10 @@
+#include "util.hpp"
 #include "transport.hpp"
 #include <unistd.h>
-#include <netinet/in.h>
-#include <sys/un.h>
 
-Socket::Socket(int fd) {
+Socket::Socket(int fd, sockaddr_in addr) {
     this->fd = fd;
+    this->addr = addr;
 }
 
 void Socket::close() {
@@ -20,14 +20,14 @@ ssize_t Socket::write(void *buf, size_t len) {
     return ::write(fd, buf, len);
 }
 
-Socket *ServerSocket::accept() {
+std::unique_ptr<Socket> ServerSocket::accept() {
     sockaddr_in clientAddr;
     var addrSize = sizeof clientAddr;
     int client = ::accept(fd, (sockaddr *) &clientAddr, (socklen_t *) &addrSize);
     if (client < 0) {
         error(errno, errno, "accept");
     }
-    return new Socket(client);
+    return std::unique_ptr<Socket>(new Socket(client, clientAddr));
 }
 
 void ServerSocket::close() {
