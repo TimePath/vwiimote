@@ -11,7 +11,11 @@ public:
 
     void close();
 
-    ssize_t read(void *buf, size_t i);
+    ssize_t read(void *buf, size_t len);
+
+    ssize_t write(void *buf, size_t len);
+
+    Socket(int fd);
 };
 
 class ServerSocket {

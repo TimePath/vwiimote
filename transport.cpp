@@ -3,13 +3,21 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 
+Socket::Socket(int fd) {
+    this->fd = fd;
+}
+
 void Socket::close() {
     ::shutdown(fd, SHUT_RDWR);
     ::close(fd);
 }
 
 ssize_t Socket::read(void *buf, size_t len) {
-    return recv(fd, buf, len, 0);
+    return ::recv(fd, buf, len, 0);
+}
+
+ssize_t Socket::write(void *buf, size_t len) {
+    return ::write(fd, buf, len);
 }
 
 Socket *ServerSocket::accept() {
@@ -19,7 +27,7 @@ Socket *ServerSocket::accept() {
     if (client < 0) {
         error(errno, errno, "accept");
     }
-    return new Socket;
+    return new Socket(client);
 }
 
 void ServerSocket::close() {
@@ -31,7 +39,7 @@ void ServerSocket::close() {
 #define AF_INET 2
 
 void ServerSocket::listen(uint16_t port) {
-    val reuseAddress = 1;
+    val reuseAddress = true;
 
     val server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) error(EIO, EIO, "Error creating socket");
@@ -39,7 +47,7 @@ void ServerSocket::listen(uint16_t port) {
     setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &reuseAddress, (socklen_t) sizeof reuseAddress);
 
     sockaddr_in serverAddr;
-    bzero(&serverAddr, sizeof serverAddr);
+    zero(serverAddr);
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(port);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
