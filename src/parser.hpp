@@ -1,12 +1,12 @@
 #pragma once
 
-#include "util.hpp"
 #include "defs.hpp"
 #include "transport.hpp"
+#include "util.hpp"
 
 enum Destination : uint8_t {
-    CONSOLE = 0xA1,
-    REMOTE = 0xA2
+    CONSOLE = 0xA1, // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_INPUT
+    REMOTE = 0xA2 // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_OUPUT
 };
 
 #pragma pack(push, 1)

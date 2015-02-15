@@ -1,6 +1,6 @@
-#include "util.hpp"
 #include "transport.hpp"
 #include <unistd.h>
+#include "util.hpp"
 
 Socket::Socket(int fd, sockaddr_in addr) {
     this->fd = fd;

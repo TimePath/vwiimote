@@ -5,7 +5,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -Wextra -pedant
 
 set(SOURCE_FILES
     src/main.cpp
+    src/bluetooth.cpp
     src/parser.cpp
     src/transport.cpp
 )
 add_executable(wii ${SOURCE_FILES})
+target_link_libraries(wii "bluetooth")

@@ -1,6 +1,7 @@
-#include "util.hpp"
 #include "transport.hpp"
 #include "parser.hpp"
+#include "bluetooth.hpp"
+#include "util.hpp"
 
 template<typename T>
 Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
@@ -12,6 +13,7 @@ Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
 }
 
 int main() {
+    bluetooth::setup();
     ServerSocket serv = ServerSocket();
     serv.listen(9019);
     loop {

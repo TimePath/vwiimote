@@ -1,5 +1,5 @@
-#include "util.hpp"
 #include "parser.hpp"
+#include "util.hpp"
 
 // http://wiibrew.org/wiki/Wiimote
 
