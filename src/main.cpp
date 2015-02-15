@@ -18,7 +18,7 @@ int main() {
         std::cout << "-- Waiting" << std::endl;
         val client = serv.accept();
         if (!client) break;
-        std::cout << "-- Accept " << (int) client->addr.sin_port << std::endl;
+        std::cout << "-- Accept " << std::dec << client->addr.sin_port << std::endl;
         uint8_t buf[128];
         for (ssize_t r; (r = client->read(buf, sizeof buf - 1)) != 0;) {
             if (r < 0) {
@@ -32,18 +32,18 @@ int main() {
             switch (op) {
 #define REQUEST_PARSE(id, value, type, size)                                                        \
                 case value:                                                                         \
-                    std::cout << "<  0x" << std::hex << value << " " << #id << " (" << size << ")" << std::endl; \
-                    respond(read<type>(destination, op, p), *client);                                  \
+                    std::cout << "<  0x" << std::hex << (int) value << " " #id << " (" << std::dec << size << ")" << std::endl; \
+                    respond(read<type>(destination, op, p), *client);                               \
                     p += size;                                                                      \
                     break;
                 REQUESTS(REQUEST_PARSE)
                 default:
-                    std::cout << "<  0x" << std::hex << (int) op << std::endl;
+                    std::cout << "<  0x" << std::hex << op << std::endl;
                     break;
             }
             zero(buf);
         }
-        std::cout << "-- Close " << (int) client->addr.sin_port << std::endl;
+        std::cout << "-- Close " << std::dec << client->addr.sin_port << std::endl;
         client->close();
     }
     serv.close();

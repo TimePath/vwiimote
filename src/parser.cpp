@@ -8,7 +8,7 @@
 template<typename T>
 void write(Socket &socket, std::unique_ptr<Message<T>> buf, size_t &length) {
     socket.write(reinterpret_cast<uint8_t *>(buf.get()), length);
-    std::cout << " > " << "0x" << std::hex << (int) buf->op << " " << (Response) buf->op << " (" << sizeof buf->data << ")" << std::endl;
+    std::cout << " > 0x" << std::hex << (int) buf->op << " " << (Response) buf->op << " (" << std::dec << sizeof buf->data << ")" << std::endl;
 }
 
 template<typename T>
@@ -62,7 +62,7 @@ void respond(Message<status_request_t> msg, Socket &socket) {
 
 template<>
 void respond(Message<mem_write_t> msg, Socket &socket) {
-    std::cout << "-- Storing " << (int) msg.data.size << " bytes" << std::endl;
+    std::cout << "-- Storing " << std::dec << (int) msg.data.size << " bytes" << std::endl;
 }
 
 //template<>
