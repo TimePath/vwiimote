@@ -16,6 +16,8 @@ void zero(T &s) {
     memset(&s, 0, sizeof s);
 }
 
+#define assert_static(e, name) enum { __assert_##name = 1/(e) }
+
 struct uint24_t {
     uint8_t data[3];
 

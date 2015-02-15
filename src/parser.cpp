@@ -52,9 +52,9 @@ template<>
 void respond(Message<status_request_t> msg, Socket &socket) {
     status_t ret;
     zero(ret);
-    ret.buttons = 1;
-    ret.bits.leds = 2;
-    ret.bits.flags = 3;
+    ret.buttons.value = 1;
+    ret.flags.named.extension = 1;
+    ret.flags.value = 3;
     ret.battery = 4;
     write(socket, STATUS, ret);
 }
