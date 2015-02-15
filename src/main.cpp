@@ -1,7 +1,33 @@
+#include <cereal/archives/json.hpp>
+#include <cereal/types/vector.hpp>
+#include <fstream>
+
 #include "transport.hpp"
 #include "parser.hpp"
 #include "bluetooth.hpp"
-#include "util.hpp"
+
+struct config_t {
+    bool bluetooth = true;
+
+    template<class Archive>
+    void serialize(Archive &ar) {
+        ar(CEREAL_NVP(bluetooth));
+    }
+} config;
+
+void configure() {
+    char const *file = "config.json";
+    try {
+        std::ifstream is(file, std::ios::binary);
+        cereal::JSONInputArchive r(is);
+        config.serialize(r);
+    } catch (std::exception e) {
+        std::ofstream os(file, std::ios::binary);
+        cereal::JSONOutputArchive w(os);
+        config.serialize(w);
+    }
+    std::cout << config.bluetooth << std::endl;
+}
 
 template<typename T>
 Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
@@ -13,7 +39,10 @@ Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
 }
 
 int main() {
-    bluetooth::setup();
+    configure();
+    if (config.bluetooth) {
+        bluetooth::setup();
+    }
     ServerSocket serv = ServerSocket();
     serv.listen(9019);
     loop {
