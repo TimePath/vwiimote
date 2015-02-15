@@ -50,25 +50,32 @@ std::unique_ptr<Message<T>> pack(Response op, T &payload, size_t &length) {
 #pragma clang diagnostic ignored "-Wunused-parameter"
 template<>
 void respond(Message<status_request_t> msg, Socket &socket) {
-    status_t status;
-    zero(status);
-    status.buttons = 1;
-    status.bits.leds = 2;
-    status.bits.flags = 3;
-    status.battery = 4;
-    write(socket, STATUS, status);
+    status_t ret;
+    zero(ret);
+    ret.buttons = 1;
+    ret.bits.leds = 2;
+    ret.bits.flags = 3;
+    ret.battery = 4;
+    write(socket, STATUS, ret);
 }
 #pragma clang diagnostic pop
 
 template<>
 void respond(Message<mem_write_t> msg, Socket &socket) {
-    std::cout << "-- Storing " << std::dec << (int) msg.data.size << " bytes" << std::endl;
+    std::cout << "-- WRITE " << std::dec << (int) msg.data.size << " bytes" << std::endl;
+    return_t ret;
+    zero(ret);
+    write(socket, RETURN, ret);
 }
 
-//template<>
-//void respond(Message<mem_read_t> msg, Socket &socket) {
-//}
-//
+template<>
+void respond(Message<mem_read_t> msg, Socket &socket) {
+    std::cout << "-- READ " << std::dec << (int) msg.data.size << " bytes" << std::endl;
+    data_t ret;
+    zero(ret);
+    write(socket, DATA, ret);
+}
+
 //template<>
 //void respond(Message<speaker_data_t> msg, Socket &socket) {
 //}

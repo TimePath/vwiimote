@@ -61,11 +61,11 @@ struct ir2_t {
     /**/
 
 struct status_t {
-    int16_t buttons;
+    uint16_t buttons;
     union {
         struct {
-            uint8_t leds : 4;
             uint8_t flags : 4;
+            uint8_t leds : 4;
         } bits;
         uint8_t ledflags;
     };
@@ -76,11 +76,28 @@ struct status_t {
 struct empty_t {
 };
 
+struct data_t {
+    uint16_t buttons;
+    uint8_t flags;
+    uint16_t address;
+    uint8_t data[16];
+};
+
+struct return_t {
+    uint16_t buttons;
+    uint8_t id;
+    uint8_t error;
+};
+
+struct buttons_t {
+    uint16_t buttons;
+};
+
 #define RESPONSES(_)                                     /* */\
     _(STATUS,               0x20, status_t,         6)   /* */\
-    _(DATA,                 0x21, empty_t,          21)  /* */\
-    _(RETURN,               0x22, empty_t,          4)   /* */\
-    _(BUTTONS,              0x30, empty_t,          2)   /* 2B */\
+    _(DATA,                 0x21, data_t,           21)  /* */\
+    _(RETURN,               0x22, return_t,         4)   /* */\
+    _(BUTTONS,              0x30, buttons_t,        2)   /* */\
     _(BUTTONS_ACCEL,        0x31, empty_t,          5)   /* 2B 3A */\
     _(BUTTONS_EXT,          0x32, empty_t,          10)  /* 2B 8E */\
     _(BUTTONS_ACCEL_IR,     0x33, empty_t,          17)  /* 2B 3A 12I */\
