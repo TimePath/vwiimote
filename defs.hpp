@@ -26,15 +26,13 @@ struct status_request_t {
 };
 struct mem_write_t {
     uint8_t flags;
-    uint16_t offset1;
-    uint8_t offset2;
+    uint24_t offset;
     uint8_t size;
     uint8_t data[16];
 };
 struct mem_read_t {
     uint8_t flags;
-    uint16_t offset1;
-    uint8_t offset2;
+    uint24_t offset;
     uint16_t size;
 };
 struct speaker_data_t {
