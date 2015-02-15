@@ -1,6 +1,12 @@
 # vwiimote
 ----------
 
+## Build
+`cmake . && make`
+
+## Run
+`./out/vwiimote`
+
 ## Disable plugins
 /etc/bluetooth/main.conf:  
 `DisablePlugins = network,input,audio,pnat,sap,serial`
