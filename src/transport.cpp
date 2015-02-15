@@ -39,12 +39,11 @@ void ServerSocket::close() {
 #define AF_INET 2
 
 void ServerSocket::listen(uint16_t port) {
-    val reuseAddress = true;
-
     val server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) error(EIO, EIO, "Error creating socket");
 
-    setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &reuseAddress, (socklen_t) sizeof reuseAddress);
+    val reuseAddress = 1;
+    setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &reuseAddress, sizeof reuseAddress);
 
     sockaddr_in serverAddr;
     zero(serverAddr);
