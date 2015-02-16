@@ -4,57 +4,67 @@
 #include "transport.hpp"
 #include "util.hpp"
 
-enum Destination : uint8_t {
-    CONSOLE = 0xA1, // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_INPUT
-    REMOTE = 0xA2 // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_OUPUT
-};
+namespace vwiimote {
+    enum Destination : uint8_t {
+        CONSOLE = 0xA1, // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_INPUT
+        REMOTE = 0xA2 // HIDP_TRANS_DATA | HIDP_DATA_RTYPE_OUPUT
+    };
 
 #pragma pack(push, 1)
 
-template<typename T>
-struct Message {
-    Destination destination;
-    uint8_t op;
-    T data;
-};
+    template<typename T>
+    struct Message {
+        Destination destination;
+        uint8_t op;
+        T data;
+    };
 
 #pragma pack(pop)
 
+    template<typename T>
+    Message<T> read(Destination destination, uint8_t op, uint8_t *data) {
+        Message<T> m;
+        m.op = op;
+        m.destination = destination;
+        m.data = *reinterpret_cast<T *>(data);
+        return m;
+    }
+
 #define MSG_ENUM(id, value, type, size) id = value,
 
-enum Request : uint8_t {
-    REQUESTS(MSG_ENUM)
-};
+    enum Request : uint8_t {
+        REQUESTS(MSG_ENUM)
+    };
 
-enum Response : uint8_t {
-    RESPONSES(MSG_ENUM)
-};
+    enum Response : uint8_t {
+        RESPONSES(MSG_ENUM)
+    };
 
 #define MSG_CONCAT(id, value, type, size)   \
         case id:                            \
             os << #id;                      \
             break;
 
-inline std::ostream &operator<<(std::ostream &os, Request r) {
-    switch (r) {
-        REQUESTS(MSG_CONCAT)
-        default:
-            os.setstate(std::ios_base::failbit);
+    inline std::ostream &operator<<(std::ostream &os, Request r) {
+        switch (r) {
+            REQUESTS(MSG_CONCAT)
+            default:
+                os.setstate(std::ios_base::failbit);
+        }
+        return os;
     }
-    return os;
-}
 
-inline std::ostream &operator<<(std::ostream &os, Response r) {
-    switch (r) {
-        RESPONSES(MSG_CONCAT)
-        default:
-            os.setstate(std::ios_base::failbit);
+    inline std::ostream &operator<<(std::ostream &os, Response r) {
+        switch (r) {
+            RESPONSES(MSG_CONCAT)
+            default:
+                os.setstate(std::ios_base::failbit);
+        }
+        return os;
     }
-    return os;
-}
 
-template<class T>
-void respond(Message<T> msg, Socket &socket) {
-    std::cout << "-- Unimplemented " << static_cast<Request>(msg.op) << std::endl;
+    template<class T>
+    void respond(Message<T> msg, Socket &socket) {
+        std::cout << "-- Unimplemented " << static_cast<Request>(msg.op) << std::endl;
+    }
 }
-

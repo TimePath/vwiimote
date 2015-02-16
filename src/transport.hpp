@@ -3,27 +3,29 @@
 #include <netinet/in.h>
 #include "util.hpp"
 
-class Socket {
-    int fd = -1;
-public:
-    sockaddr_in addr;
+namespace vwiimote {
+    class Socket {
+        int fd = -1;
+    public:
+        sockaddr_in addr;
 
-    void close();
+        void close();
 
-    ssize_t read(void *buf, size_t len);
+        ssize_t read(void *buf, size_t len);
 
-    ssize_t write(void *buf, size_t len);
+        ssize_t write(void *buf, size_t len);
 
-    Socket(int fd, sockaddr_in addr);
-};
+        Socket(int fd, sockaddr_in addr);
+    };
 
-class ServerSocket {
-    int fd = -1;
-public:
+    class ServerSocket {
+        int fd = -1;
+    public:
 
-    void listen(uint16_t port);
+        void listen(uint16_t port);
 
-    std::unique_ptr<Socket> accept();
+        std::unique_ptr<Socket> accept();
 
-    void close();
-};
+        void close();
+    };
+}

@@ -21,6 +21,7 @@ set(cereal_INCLUDE_DIRS "${PREFIX}/src/cereal/include")
 set(SOURCE_FILES
     src/main.cpp
     src/bluetooth.cpp
+    src/config.cpp
     src/parser.cpp
     src/transport.cpp
 )

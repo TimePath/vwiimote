@@ -2,49 +2,51 @@
 
 #include "util.hpp"
 
+namespace vwiimote {
+
 #pragma pack(push, 1)
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-struct rumble_t {
-    uint8_t value;
-};
-struct led_t {
-    uint8_t value;
-};
-struct data_report_t {
-    uint8_t flags;
-    uint8_t mode;
-};
-struct ir1_t {
-    uint8_t value;
-};
-struct speaker_enable_t {
-    uint8_t value;
-};
-struct status_request_t {
-    uint8_t value;
-};
-struct mem_write_t {
-    uint8_t flags;
-    uint24_t offset;
-    uint8_t size;
-    uint8_t data[16];
-};
-struct mem_read_t {
-    uint8_t flags;
-    uint24_t offset;
-    uint16_t size;
-};
-struct speaker_data_t {
-    uint8_t length;
-    uint8_t data[20];
-};
-struct speaker_mute_t {
-    uint8_t value;
-};
-struct ir2_t {
-    uint8_t value;
-};
+    struct rumble_t {
+        uint8_t value;
+    };
+    struct led_t {
+        uint8_t value;
+    };
+    struct data_report_t {
+        uint8_t flags;
+        uint8_t mode;
+    };
+    struct ir1_t {
+        uint8_t value;
+    };
+    struct speaker_enable_t {
+        uint8_t value;
+    };
+    struct status_request_t {
+        uint8_t value;
+    };
+    struct mem_write_t {
+        uint8_t flags;
+        uint24_t offset;
+        uint8_t size;
+        uint8_t data[16];
+    };
+    struct mem_read_t {
+        uint8_t flags;
+        uint24_t offset;
+        uint16_t size;
+    };
+    struct speaker_data_t {
+        uint8_t length;
+        uint8_t data[20];
+    };
+    struct speaker_mute_t {
+        uint8_t value;
+    };
+    struct ir2_t {
+        uint8_t value;
+    };
 
 #define REQUESTS(_)                                 \
     /* id, value, type, size */                     \
@@ -61,42 +63,42 @@ struct ir2_t {
     _(IR2,              0x1A, ir2_t,            1)  \
     /**/
 
-struct buttons_t {
-    union {
-        struct {
-            uint16_t left : 1;
-            uint16_t right : 1;
-            uint16_t down : 1;
-            uint16_t up : 1;
-            uint16_t plus : 1;
-            uint16_t other1 : 1;
-            uint16_t other2 : 1;
-            uint16_t unknown : 1;
-            uint16_t two : 1;
-            uint16_t one : 1;
-            uint16_t b : 1;
-            uint16_t a : 1;
-            uint16_t minus : 1;
-            uint16_t other3 : 1;
-            uint16_t other4 : 1;
-            uint16_t home : 1;
-        } named;
-        uint16_t value;
+    struct buttons_t {
+        union {
+            struct {
+                uint16_t left : 1;
+                uint16_t right : 1;
+                uint16_t down : 1;
+                uint16_t up : 1;
+                uint16_t plus : 1;
+                uint16_t other1 : 1;
+                uint16_t other2 : 1;
+                uint16_t unknown : 1;
+                uint16_t two : 1;
+                uint16_t one : 1;
+                uint16_t b : 1;
+                uint16_t a : 1;
+                uint16_t minus : 1;
+                uint16_t other3 : 1;
+                uint16_t other4 : 1;
+                uint16_t home : 1;
+            } named;
+            uint16_t value;
+        };
     };
-};
 
-struct accel_t {
-    uint8_t x, y, z;
-};
+    struct accel_t {
+        uint8_t x, y, z;
+    };
 
-struct ext_t {
-    uint8_t value[21];
-};
+    struct ext_t {
+        uint8_t value[21];
+    };
 
-struct status_t {
-    buttons_t buttons;
-    union {
-        struct {
+    struct status_t {
+        buttons_t buttons;
+        union {
+            struct {
                 uint8_t low_power : 1;
                 uint8_t extension : 1;
                 uint8_t speaker : 1;
@@ -105,71 +107,71 @@ struct status_t {
                 uint8_t led1 : 1;
                 uint8_t led2 : 1;
                 uint8_t led3 : 1;
-        } named;
-        uint8_t value;
-    } flags;
-    uint16_t padding;
-    uint8_t battery;
-};
+            } named;
+            uint8_t value;
+        } flags;
+        uint16_t padding;
+        uint8_t battery;
+    };
 
-struct data_t {
-    buttons_t buttons;
-    uint8_t flags;
-    uint16_t address;
-    uint8_t data[16];
-};
+    struct data_t {
+        buttons_t buttons;
+        uint8_t flags;
+        uint16_t address;
+        uint8_t data[16];
+    };
 
-struct return_t {
-    buttons_t buttons;
-    uint8_t id;
-    uint8_t error;
-};
+    struct return_t {
+        buttons_t buttons;
+        uint8_t id;
+        uint8_t error;
+    };
 
-struct buttons_accel_t {
-    buttons_t buttons;
-    accel_t accel;
-};
+    struct buttons_accel_t {
+        buttons_t buttons;
+        accel_t accel;
+    };
 
-struct buttons_ext_t {
-    buttons_t buttons;
-    uint8_t extension[8];
-};
+    struct buttons_ext_t {
+        buttons_t buttons;
+        uint8_t extension[8];
+    };
 
-struct buttons_accel_ir_t {
-    buttons_t buttons;
-    accel_t accel;
-    uint8_t ir[12];
-};
+    struct buttons_accel_ir_t {
+        buttons_t buttons;
+        accel_t accel;
+        uint8_t ir[12];
+    };
 
-struct buttons_ext2_t {
-    buttons_t buttons;
-    uint8_t extension[19];
-};
+    struct buttons_ext2_t {
+        buttons_t buttons;
+        uint8_t extension[19];
+    };
 
-struct buttons_accel_ext_t {
-    buttons_t buttons;
-    accel_t accel;
-    uint8_t extension[16];
-};
+    struct buttons_accel_ext_t {
+        buttons_t buttons;
+        accel_t accel;
+        uint8_t extension[16];
+    };
 
-struct buttons_ir_ext_t {
-    buttons_t buttons;
-    uint8_t ir[10];
-    uint8_t extension[9];
-};
+    struct buttons_ir_ext_t {
+        buttons_t buttons;
+        uint8_t ir[10];
+        uint8_t extension[9];
+    };
 
-struct buttons_accel_ir_ext_t {
-    buttons_t buttons;
-    accel_t accel;
-    uint8_t ir[10];
-    uint8_t extension[6];
-};
+    struct buttons_accel_ir_ext_t {
+        buttons_t buttons;
+        accel_t accel;
+        uint8_t ir[10];
+        uint8_t extension[6];
+    };
 
-struct buttons_accel_ir_interleaved_t {
-    buttons_t buttons;
-    uint8_t accel;
-    uint8_t ir[18];
-};
+    struct buttons_accel_ir_interleaved_t {
+        buttons_t buttons;
+        uint8_t accel;
+        uint8_t ir[18];
+    };
 
 #define RESPONSES(_)                                                    \
     /* id, value, type, size */                                         \
@@ -193,5 +195,6 @@ struct buttons_accel_ir_interleaved_t {
 
 #define MSG_ASSERT_SIZE(id, op, def, size) assert_static(sizeof(def) == size, sizeof_##id);
 
-REQUESTS(MSG_ASSERT_SIZE)
-RESPONSES(MSG_ASSERT_SIZE)
+    REQUESTS(MSG_ASSERT_SIZE)
+    RESPONSES(MSG_ASSERT_SIZE)
+}
