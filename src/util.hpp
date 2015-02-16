@@ -12,6 +12,10 @@ namespace vwiimote {
 #define val const var
 #define loop for(;;)
 
+#define _STR(s) #s
+#define STR(s) _STR(s)
+#define die(reason) error(errno, errno, (__FILE__ ":" STR(__LINE__) ":" + std::string(__func__) + " " reason).c_str())
+
     template<typename T>
     void zero(T &s) {
         memset(&s, 0, sizeof s);

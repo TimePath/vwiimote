@@ -19,7 +19,7 @@ int main() {
         uint8_t buf[128];
         for (ssize_t r; (r = client->read(buf, sizeof buf - 1)) != 0;) {
             if (r < 0) {
-                error(errno, errno, "recv");
+                die("recv");
             }
             var *p = buf;
             val destination = static_cast<Destination>(*p++);

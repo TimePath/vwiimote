@@ -27,7 +27,7 @@ namespace vwiimote {
         var addrSize = sizeof clientAddr;
         int client = ::accept(fd, (sockaddr *) &clientAddr, (socklen_t *) &addrSize);
         if (client < 0) {
-            error(errno, errno, "accept");
+            die("accept");
         }
         return std::unique_ptr<Socket>(new Socket(client, clientAddr));
     }
@@ -42,7 +42,7 @@ namespace vwiimote {
 
     void ServerSocket::listen(uint16_t port) {
         val server = socket(AF_INET, SOCK_STREAM, 0);
-        if (server < 0) error(EIO, EIO, "Error creating socket");
+        if (server < 0) die("socket");
 
         val reuseAddress = 1;
         setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &reuseAddress, sizeof reuseAddress);
@@ -53,8 +53,8 @@ namespace vwiimote {
         serverAddr.sin_port = htons(port);
         serverAddr.sin_addr.s_addr = INADDR_ANY;
 
-        if (bind(server, (sockaddr *) &serverAddr, (socklen_t) sizeof serverAddr) < 0) error(errno, errno, "bind");
-        if (::listen(server, 1024) < 0) error(errno, errno, "listen");
+        if (bind(server, (sockaddr *) &serverAddr, (socklen_t) sizeof serverAddr) < 0) die("bind");
+        if (::listen(server, 1024) < 0) die("listen");
         fd = server;
     }
 }
